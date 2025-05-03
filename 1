@@ -1,0 +1,91 @@
+Frontend (React)
+1. App.jsx
+
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Home from "./pages/Home";
+import ProductList from "../components/ProductList";
+import ProductDetails from "../components/ProductDetails";
+import AddProduct from "../components/AddProduct";
+import OfferPage from "../components/OfferPage";
+import ProfilePage from "../components/ProfilePage";
+
+function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [offers, setOffers] = useState([]);
+
+  useEffect(() => {
+    const fakeUser = {
+      id: "demo-user",
+      ad: "Demo Kullanıcı",
+      email: "demo@bartertown.com",
+      sehir: "İstanbul",
+      katilimTarihi: "2024-11-12",
+    };
+    setCurrentUser(fakeUser);
+
+    const fakeProducts = [
+      {
+        id: 1,
+        ad: "İkinci El Bisiklet",
+        aciklama: "Az kullanılmış, şehir içi bisiklet.",
+        resim: "https://via.placeholder.com/300",
+        ilanSahibi: "demo-user",
+      },
+      {
+        id: 2,
+        ad: "Kitap Seti",
+        aciklama: "Roman ve kişisel gelişim kitapları.",
+        resim: "https://via.placeholder.com/300",
+        ilanSahibi: "baska-user",
+      },
+    ];
+    setProducts(fakeProducts);
+
+    const fakeOffers = [
+      {
+        gonderen: "baska-user",
+        hedefKullaniciId: "demo-user",
+        mesaj: "Kitap seti karşılığında bisiklet takası öneriyorum."
+      }
+    ];
+    setOffers(fakeOffers);
+  }, []);
+
+  if (!currentUser) return <div className="p-6">Yükleniyor...</div>;
+
+  return (
+    <Router>
+      <div className="min-h-screen flex flex-col">
+        <nav className="bg-white shadow p-4 flex justify-between items-center">
+          <Link to="/" className="text-xl font-bold text-blue-700">Bartertown</Link>
+          <div className="flex gap-4">
+            <Link to="/" className="hover:underline">Ana Sayfa</Link>
+            <Link to="/products" className="hover:underline">Ürünler</Link>
+            <Link to="/add-product" className="hover:underline">Ürün Ekle</Link>
+            <Link to="/offers" className="hover:underline">Teklifler</Link>
+            <Link to="/profile" className="hover:underline">Profil</Link>
+          </div>
+        </nav>
+
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/products" element={<ProductList currentUser={currentUser} products={products} />} />
+            <Route path="/product/:productId" element={<ProductDetails currentUser={currentUser} products={products} />} />
+            <Route path="/add-product" element={<AddProduct currentUser={currentUser} setProducts={setProducts} />} />
+            <Route path="/offers" element={<OfferPage currentUser={currentUser} />} />
+            <Route path="/profile" element={<ProfilePage currentUser={currentUser} products={products} offers={offers} />} />
+          </Routes>
+        </main>
+
+        <footer className="text-center p-4 text-sm text-gray-500">
+          © 2025 Bartertown - Takasın Yeni Adresi
+        </footer>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
